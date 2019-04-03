@@ -1,4 +1,10 @@
 [Service]
-Environment=http_proxy=http://proxy:8118
-Environment=https_proxy=http://proxy:8118
-Environment=no_proxy=172.30.0.1,cluster.local,int.iwarp.org
+{% if not crio_proxies.http_proxy is none %}
+Environment=http_proxy={{ crio_proxies.http_proxy }}
+{% endif %}
+{% if not crio_proxies.https_proxy is none %}
+Environment=https_proxy={{ crio_proxies.https_proxy }}
+{% endif %}
+{% if not crio_proxies.no_proxy is none %}
+Environment=no_proxy={{ crio_proxies.no_proxy }}
+{% endif %}

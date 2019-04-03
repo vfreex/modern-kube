@@ -1,0 +1,19 @@
+crio_proxies:
+#    http_proxy: null
+#    https_proxy: null
+#    no_proxy: null
+crio_install_from: package_manager
+crio_yum_repository:
+  name: paas7-crio-311-candidate
+  description: cri-o
+  baseurl: https://cbs.centos.org/repos/paas7-crio-311-candidate/$basearch/os/
+  skip_if_unavailable: yes
+  gpgcheck: no
+  enabled: no
+crio_yum:
+  name:
+  - cri-o
+  - cri-tools
+  - containernetworking-plugins
+  state: present
+  enablerepo: paas7-crio-311-candidate
