@@ -1,0 +1,27 @@
+# from https://github.com/kubernetes/contrib/blob/master/init/systemd/kubelet.service
+[Unit]
+Description=Kubernetes Kubelet Server
+Documentation=https://kubernetes.io/docs/concepts/overview/components/#kubelet https://kubernetes.io/docs/reference/generated/kubelet/
+After=network.target
+Requires=network.target
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+EnvironmentFile=-/etc/sysconfig/kubelet
+ExecStart=/usr/local/bin/kubelet \
+	    $KUBE_LOGTOSTDERR \
+	    $KUBE_LOG_LEVEL \
+	    $KUBELET_KUBECONFIG \
+	    $KUBELET_ADDRESS \
+	    $KUBELET_PORT \
+	    $KUBELET_HOSTNAME \
+	    $KUBE_ALLOW_PRIV \
+	    $KUBELET_ARGS \
+            $KUBELET_EXTRA_ARGS
+Restart=on-failure
+KillMode=process
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
+

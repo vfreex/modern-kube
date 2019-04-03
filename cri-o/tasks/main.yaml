@@ -1,0 +1,71 @@
+# https://kubernetes.io/docs/setup/cri/#cri-o
+
+- name: Configure YUM repo
+  yum_repository:
+    name: paas7-crio-311-candidate
+    description: cri-o
+    baseurl: https://cbs.centos.org/repos/paas7-crio-311-candidate/$basearch/os/
+    skip_if_unavailable: yes
+    gpgcheck: no
+- name: Install packages
+  yum:
+    name:
+    - cri-o
+    - cri-tools
+    state: latest
+- name: mkdirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /etc/systemd/system/crio.service.d
+  - /opt/cni
+- name: config
+  template:
+    dest: /etc/systemd/system/crio.service.d/proxy.conf
+    src: crio-proxy.conf.j2
+- name: check if CNI bin dir exists
+  stat: 
+    path: /opt/cni/bin
+  register: cni_bin_dir
+- name: cni bin dir
+  file:
+    path: /opt/cni/bin
+    state: link
+    src: /usr/libexec/cni
+  when: cni_bin_dir.stat.exists == False
+
+- name: mkdir /etc/modules-load.d
+  file:
+    path: /etc/modules-load.d
+    state: directory
+
+- name: Enable kernel modules
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - br_netfilter
+
+- name: Persist kernel modules
+  copy:
+    dest: "/etc/modules-load.d/k8s-{{ item }}.conf"
+    content: "{{ item }}"
+  with_items:
+  - br_netfilter
+
+- name: configure sysctl params
+  copy:
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+    src: 99-kubernetes-cri.conf   
+
+- name: apply sysctl
+  command: sysctl --system
+
+- name: Make sure crio service is enabled and running
+  systemd:
+    name: crio
+    daemon_reload: yes
+    state: started
+    enabled: yes
+

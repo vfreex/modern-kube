@@ -1,0 +1,31 @@
+- name: download kubernetes-node
+  get_url:
+    dest: /tmp/kubernetes-node-linux-amd64.tar.gz
+    url: https://dl.k8s.io/v1.14.0/kubernetes-node-linux-amd64.tar.gz
+    checksum: sha512:75dc99919d1084d7d471a53ab60c743dc399145c99e83f37c6ba3c241b2c0b2ecc2c0d1b94690ff912e2a15b7c5595aa1d2d24c2fc439e06d85ff0246fb43b89
+  environment:
+    https_proxy: http://proxy:8118
+- name: unarchive
+  unarchive:
+    dest: /tmp
+    src: /tmp/kubernetes-node-linux-amd64.tar.gz
+    remote_src: yes
+- name: install
+  copy:
+    dest: "/usr/local/bin/{{ item }}"
+    src: "/tmp/kubernetes/node/bin/{{ item }}"
+    remote_src: yes
+    mode: 0755
+  with_items:
+  - kubeadm
+- name: mkdirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /etc/systemd/system/kubelet.service.d
+- name: service
+  template:
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    src: kubelet.service.d.10-kubeadm.conf.j2
+
