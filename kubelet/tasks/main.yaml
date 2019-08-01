@@ -1,11 +1,11 @@
 - name: download kubernetes-node
   get_url:
     dest: /tmp/kubernetes-node-linux-amd64.tar.gz
-    url: https://dl.k8s.io/v1.14.0/kubernetes-node-linux-amd64.tar.gz
-    checksum: sha512:75dc99919d1084d7d471a53ab60c743dc399145c99e83f37c6ba3c241b2c0b2ecc2c0d1b94690ff912e2a15b7c5595aa1d2d24c2fc439e06d85ff0246fb43b89
+    url: https://storage.googleapis.com/kubernetes-release/release/v1.15.1/kubernetes-node-linux-amd64.tar.gz
+    checksum: sha256:6498aa35ababa367efb02ceef6ab387efcfef24febe6c9065cc19567499229b9
   environment:
     http_proxy: "{{ kubelet_download_http_proxy | default('') }}"
-    https_proxy: "{{ kubelet_download_http_proxy | default('') }}"
+    https_proxy: "{{ kubelet_download_https_proxy | default('') }}"
 
 - name: unarchive
   unarchive:
@@ -95,4 +95,3 @@
     state: started
     enabled: yes
     daemon_reload: yes
-
