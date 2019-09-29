@@ -1,8 +1,8 @@
 - name: download kubernetes-node
   get_url:
     dest: /tmp/kubernetes-node-linux-amd64.tar.gz
-    url: https://storage.googleapis.com/kubernetes-release/release/v1.15.1/kubernetes-node-linux-amd64.tar.gz
-    checksum: sha256:6498aa35ababa367efb02ceef6ab387efcfef24febe6c9065cc19567499229b9
+    url: https://storage.googleapis.com/kubernetes-release/release/v1.16.0/kubernetes-node-linux-amd64.tar.gz
+    checksum: sha256:23f93b6b9967b22581869fd7b6f43506ccb2f522b63805cb77206b2ed183bc8b
   environment:
     http_proxy: "{{ kubelet_download_http_proxy | default('') }}"
     https_proxy: "{{ kubelet_download_https_proxy | default('') }}"
